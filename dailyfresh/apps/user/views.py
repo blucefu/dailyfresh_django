@@ -16,6 +16,11 @@ from django.http import HttpResponse
 
 from django.conf import settings # 从dailyfresh里面settings导入SECRET_KEY 
 
+
+from utils.mixin import LoginRequiredMixin # 先在utils目录下创建LoginRequiredMixin，再导入
+
+# from django.contrib.auth.mixins import PermissionRequiredMixin # django 1.11里面直接导入
+
 import re
 
 # Create your views here.
@@ -183,16 +188,24 @@ class LoginView(View):
         # 返回应答
 
 
+
 # /user
-class UserInfoView(View):
+class UserInfoView(LoginRequiredMixin, View):
     '''用户中心-信息页'''
     def get(self, request):
         '''显示'''
+        # page = 'user'
+        # Django使用会话和中间件来拦截request 对象到认证系统中。
+        # 它们在每个请求上提供一个request.user属性，表示当前的用户
+        # 如果用户未登录 -> request.user属性将设置成 AnonymousUser 的一个实例
+        # 如果用户已登录 -> request.user属性将设置成 User 的一个实例
         # 传给user_center_info.html页面一个变量 page = info
+        # 可以通过is_authenticated()区分 ，request.user.is_authenticated() 值不为空，表示用户已登录，否则表示用户未登录
+        # 
         return render(request, 'user_center_info.html', {'page': 'user'})
 
 # /user/order
-class UserOrderView(View):
+class UserOrderView(LoginRequiredMixin, View):
     '''用户中心-订单页'''
     def get(self, request):
         '''显示'''
@@ -200,15 +213,41 @@ class UserOrderView(View):
         return render(request, 'user_center_order.html',  {'page': 'order'})
 
 # /user/address
-class UserSiteView(View):
+class UserSiteView(LoginRequiredMixin, View):
     '''用户中心-地址页'''
     def get(self, request):
         '''显示'''
         # 传给user_center_site.html页面一个变量 page = address
         return render(request, 'user_center_site.html', {'page': 'address'})
 
+"""
  
+# /user
+class UserInfoView(PermissionRequiredMixin, View):
+    '''用户中心-信息页'''
+    permission_required = 'polls.can_edit'
+    def get(self, request):
+        '''显示'''
+        # 传给user_center_info.html页面一个变量 page = info
+        return render(request, 'user_center_info.html', {'page': 'user'})
 
+# /user/order
+class UserOrderView(PermissionRequiredMixin, View):
+    '''用户中心-订单页'''
+    def get(self, request):
+        '''显示'''
+        # 传给user_center_order.html页面一个变量 page = order
+        return render(request, 'user_center_order.html',  {'page': 'order'})
+
+# /user/address
+class UserSiteView(PermissionRequiredMixin, View):
+    '''用户中心-地址页'''
+    def get(self, request):
+        '''显示'''
+        # 传给user_center_site.html页面一个变量 page = address
+        return render(request, 'user_center_site.html', {'page': 'address'})
+
+"""
 
 
 

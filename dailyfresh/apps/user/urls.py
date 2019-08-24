@@ -16,8 +16,12 @@ urlpatterns = [
     # (?P<token>.*) 中 P<token> 表示捕获token
     url(r'^login$', LoginView.as_view(), name='login'), # 用户登录
     
-    url(r'^$', login_required(UserInfoView.as_view()), name='user'), # 个人中心-信息页
-    url(r'^order$', login_required(UserOrderView.as_view()), name='order'), # 个人中心-订单页
-    url(r'^address$', login_required(UserSiteView.as_view()), name='address'), # 个人中心-地址页
+    # url(r'^$', login_required(UserInfoView.as_view()), name='user'), # 个人中心-信息页
+    # url(r'^order$', login_required(UserOrderView.as_view()), name='order'), # 个人中心-订单页
+    # url(r'^address$', login_required(UserSiteView.as_view()), name='address'), # 个人中心-地址页
+ 
+    url(r'^$', UserInfoView.as_view(), name='user'), # 个人中心-信息页
+    url(r'^order$', UserOrderView.as_view(), name='order'), # 个人中心-订单页
+    url(r'^address$', UserSiteView.as_view(), name='address'), # 个人中心-地址页
  
 ]
