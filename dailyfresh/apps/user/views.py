@@ -16,8 +16,6 @@ from django.http import HttpResponse
 
 from django.conf import settings # 从dailyfresh里面settings导入SECRET_KEY 
 
-
-
 import re
 
 # Create your views here.
@@ -160,8 +158,11 @@ class LoginView(View):
                 # 记录用户登录状态
                 login(request, user)  # login函数是django用户认证系统里面的函数，存储到session 
                 
+                # 获取登录后要跳转的地址
+                # 默认跳转到首页,如果 next 不为空，则跳转到 next
+                next_url = request.GET.get('next', reverse('goods:index'))
                 # response对象可以设置cookie,所以可以先生成response对象，再通过response对象调用cookie方法，最后再return response
-                response = redirect(reverse('goods:index'))
+                response = redirect(next_url)
 
                 # 判断是否需要记录用户名
                 remember = request.POST.get('remember')
@@ -182,7 +183,31 @@ class LoginView(View):
         # 返回应答
 
 
+# /user
+class UserInfoView(View):
+    '''用户中心-信息页'''
+    def get(self, request):
+        '''显示'''
+        # 传给user_center_info.html页面一个变量 page = info
+        return render(request, 'user_center_info.html', {'page': 'user'})
 
+# /user/order
+class UserOrderView(View):
+    '''用户中心-订单页'''
+    def get(self, request):
+        '''显示'''
+        # 传给user_center_order.html页面一个变量 page = order
+        return render(request, 'user_center_order.html',  {'page': 'order'})
+
+# /user/address
+class UserSiteView(View):
+    '''用户中心-地址页'''
+    def get(self, request):
+        '''显示'''
+        # 传给user_center_site.html页面一个变量 page = address
+        return render(request, 'user_center_site.html', {'page': 'address'})
+
+ 
 
 
 
