@@ -166,3 +166,24 @@ LOGIN_URL = '/user/login'
 
 
 
+# 设置django文件储存类
+# DEFAULT_FILE_STORAGE = 'utils.fdfs.storage.FDFSStorage'
+
+# 七牛云配置
+# access_key = 'rUo3vBsGl2Lrf-a9MFSb_LYx3QMbZUwuQPmZKfJz'
+# secret_key = 'I8mKskRL-69QMhqexXjKYguKK-Ffv-nnhCVCL2PO'
+QINIU_ACCESS_KEY = 'rUo3vBsGl2Lrf-a9MFSb_LYx3QMbZUwuQPmZKfJz'
+QINIU_SECRET_KEY = 'I8mKskRL-69QMhqexXjKYguKK-Ffv-nnhCVCL2PO'
+QINIU_BUCKET_NAME = 'python_study'
+QINIU_BUCKET_DOMAIN = 'pww211o23.bkt.clouddn.com'
+QINIU_SECURE_URL = False
+
+
+# PREFIX_URL = 'http://'
+# # 文件系统更改
+# MEDIA_URL = PREFIX_URL + QINIU_BUCKET_DOMAIN + 'media/'
+# # MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace("\\", "/")
+# MEDIA_ROOT = 'media/'
+
+DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
+

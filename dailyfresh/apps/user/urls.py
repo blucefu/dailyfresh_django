@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required # 导入用户认证�
 # 具体参考django 1.11 中的认证系统 https://www.yiyibooks.cn/xx/Django_1.11.6/topics/auth/default.html
 
 # from user import views 使用视图类后就不需要这样写了
-from user.views import RegisterView, ActiveView, LoginView, UserInfoView, UserOrderView, UserSiteView
+from user.views import RegisterView, ActiveView, LoginView, UserInfoView, UserOrderView, AddressView, LogoutView
 
 urlpatterns = [
     # url(r'^register$', views.register, name='register'), # name='register'用于反向解析
@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^active/(?P<token>.*)$', ActiveView.as_view(), name='active'), # 用户激活
     # (?P<token>.*) 中 P<token> 表示捕获token
     url(r'^login$', LoginView.as_view(), name='login'), # 用户登录
+    url(r'^logout$', LogoutView.as_view(), name='logout'), # 用户退出
     
     # url(r'^$', login_required(UserInfoView.as_view()), name='user'), # 个人中心-信息页
     # url(r'^order$', login_required(UserOrderView.as_view()), name='order'), # 个人中心-订单页
@@ -22,6 +23,6 @@ urlpatterns = [
  
     url(r'^$', UserInfoView.as_view(), name='user'), # 个人中心-信息页
     url(r'^order$', UserOrderView.as_view(), name='order'), # 个人中心-订单页
-    url(r'^address$', UserSiteView.as_view(), name='address'), # 个人中心-地址页
+    url(r'^address$', AddressView.as_view(), name='address'), # 个人中心-地址页
  
 ]
