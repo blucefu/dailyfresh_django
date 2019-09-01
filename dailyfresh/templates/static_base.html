@@ -1,4 +1,4 @@
-{# 首页、注册、登录父模版 #}
+{# 静态页面首页、注册、登录父模版 #}
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -19,21 +19,11 @@
         <div class="header">
             <div class="welcome fl">欢迎来到天天生鲜!</div>
             <div class="fr">
-                {% if user.is_authenticated %}
-                <div class="login_btn fl">
-                    欢迎您：<em>{{ user.username }}</em>
-                    <span>|</span>
-                    <a href="{% url 'user:logout' %}">退出</a>
-                    <!-- {% url 'user:logout' %}反向解析, user表示总urls中设置的namespace='user'，logout是子urls中设置的name='logout' -->
-                </div>
-
-                {% else %}
                 <div class="login_btn fl">
                     <a href="{% url 'user:login' %}">登录</a>
                     <span>|</span>
                     <a href="{% url 'user:register' %}">注册</a>
                 </div>
-                {% endif %}
                 <div class="user_link fl">
                     <span>|</span>
                     <a href="{% url 'user:user' %}">用户中心</a>
@@ -58,7 +48,7 @@
         </div>
         <div class="guest_cart fr">
             <a href="#" class="cart_name fl">我的购物车</a>
-            <div class="goods_count fl" id="show_count">{{ cart_count }}</div>
+            <div class="goods_count fl" id="show_count">1</div>
         </div>
     </div>
 {% endblock search_bar %}
@@ -66,7 +56,6 @@
 
 {# 网页主体块 #}
 {% block body %}{% endblock body %}
-
 
     <div class="footer">
         <div class="foot_link">
