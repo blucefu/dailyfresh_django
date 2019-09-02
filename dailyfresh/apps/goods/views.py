@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-# from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse # 反向解析
 from django.views.generic import View # 类视图，而不是函数视图
 from django.core.cache import cache # 导入缓存
 from goods.models import GoodsType, GoodsSKU, IndexGoodsBanner, IndexPromotionBanner, IndexTypeGoodsBanner
 from django_redis import get_redis_connection # 链接redis数据库
-# from order.models import OrderGoods
+from order.models import OrderGoods # 导入订单中的评论
 
 
 # Create your views here.
@@ -56,4 +56,55 @@ class IndexView(View):
         # 使用模版
         return render(request, 'index.html', context) # 然后需要到模版中使用数据
 
-        
+    
+
+# 地址：/goods/goods_id
+class DetailView(View):
+    '''详情页'''
+    def get(self, request, goods_id):
+        '''显示详情页,需要捕获goods_id'''
+        # 获取商品信息
+        try:
+            sku = GoodsSKU.objects.get(id=goods_id)
+        except GoodsSKU.DoesNotExist:
+            # 商品不存在
+            return redirect(reverse('goods:index'))
+        # 获取首页商品分类信息
+        types = GoodsType.objects.all()
+        # 获取商品评论信息
+        sku_orders = OrderGoods.objects.filter(sku=sku).exclude(comment='') # exclude(comment='')表示排除comment为空的
+        # 获取新品信息
+        new_skus = GoodsSKU.objects.filter(type=sku.type).order_by('-create_time')[:2] # 按创建时间倒序排列
+
+        # 获取同一个spu的其他商品信息
+        same_spu_skus = GoodsSKU.objects.filter(goods=sku.goods).exclude(id=goods_id)
+
+        # 获取用户购物车商品数目
+        user = request.user
+        cart_count = 0
+        if user.is_authenticated():
+            # 用户已登录
+            conn = get_redis_connection('default') # 链接redis数据库，默认9号库
+            cart_key = 'cart_%d' % user.id # 使用hash类型 key field1 value1 field2 value2
+            cart_count = conn.hlen(cart_key) # 计算value的个数,注意不是value的和
+
+            # 获取用户历史浏览记录
+            conn = get_redis_connection('default')
+            history_key = 'history_%d' % user.id # history是list格式
+            # 移除列表中的goods_id， 0表示移除全部
+            conn.lrem(history_key, 0 ,goods_id)
+            # 把goods_id插入到列表的左侧
+            conn.lpush(history_key, goods_id)
+            # 只保留用户最新浏览的5条信息
+            conn.ltrim(history_key, 0, 4)
+
+
+        # 组织模版上下文
+        context = {'sku': sku,
+                    'types': types,
+                    'sku_orders':  sku_orders,
+                    'new_skus': new_skus,
+                    'cart_count': cart_count,
+                    'same_spu_skus': same_spu_skus}
+
+        return render(request, 'detail.html', context)

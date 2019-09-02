@@ -229,7 +229,7 @@ class UserInfoView(LoginRequiredMixin, View):
         goods_li = []
         for id in sku_id:
             goods = GoodsSKU.objects.get(id=id)
-            goods_li = append(goods)
+            goods_li.append(goods)
 
         #组织上下文
         context = {'page': 'user',
