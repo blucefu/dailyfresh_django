@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # 【新加】应用模块
     'tinymce', # 富文本编辑器
+    'haystack', # 全文检索框架
     'user', # 用户模块
     'cart', # 购物车模块
     'goods', # 商品模块
@@ -185,5 +186,28 @@ QINIU_SECURE_URL = False
 # # MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace("\\", "/")
 # MEDIA_ROOT = 'media/'
 
+# 七牛云配置
 DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuStorage'
+
+
+# 全文检索框架的配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        #使用whoosh引擎
+        # 如果使用jieba分词包，则需要使用whoosh_cn_backend
+        # whoosh_cn_backend怎么来的？是先复制了whoosh_backend，然后对其修改
+        # 'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        # 注意！！，修改whoosh_cn_backend配置后，需要重新在终端生成 python3 manage.py rebuild_index
+        #索引文件路径
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+
+#当添加、修改、删除数据时，自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
+# 指定搜索结果的每个页面显示商品数量
+HAYSTACK_SEARCH_RESULTS_PER_PAGE=1
 
