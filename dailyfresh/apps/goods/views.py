@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse # 反向解析
-from django.views.generic import View # 类视图，而不是函数视图
 from django.core.cache import cache # 导入缓存
+from django.core.paginator import Paginator  # 导入数据分页
+from django.views.generic import View # 类视图，而不是函数视图
 from goods.models import GoodsType, GoodsSKU, IndexGoodsBanner, IndexPromotionBanner, IndexTypeGoodsBanner
 from django_redis import get_redis_connection # 链接redis数据库
 from order.models import OrderGoods # 导入订单中的评论
@@ -108,3 +109,88 @@ class DetailView(View):
                     'same_spu_skus': same_spu_skus}
 
         return render(request, 'detail.html', context)
+
+# 进入列表页时候需要传的参数：商品种类id、页码、排序方式
+# 地址设计：/list/种类id/页码/排序方式
+# /list/种类id/页码?sort=排序方式
+
+# /list/种类id/页码?sort=排序方式
+class ListView(View):
+    '''商品列表页'''
+    def get(self, request, type_id, page):
+        # 获取商品种类信息
+        try:
+            type = GoodsType.objects.get(id=type_id)
+        except GoodsType.DoesNotExist:
+            # 分类不存在
+            return redirect(reverse('goods:index'))
+
+        # 获取商品分类全部信息
+        types = GoodsType.objects.all()
+
+        # 捕获url中的sort参数
+        sort = request.GET.get('sort')
+        # sort == default 默认按照商品id排序
+        # sort == price 按照商品价格从高到低排序
+        # sort == hot 按照商品销量sales从高到低排序
+
+        # 判断sort的值
+        if sort == 'price':
+            skus = GoodsSKU.objects.filter(type=type).order_by('-price')
+        elif sort == 'hot':
+            skus = GoodsSKU.objects.filter(type=type).order_by('-sales')
+        else:
+            sort = 'default'
+            skus = GoodsSKU.objects.filter(type=type).order_by('-id')
+
+        # 对商品数据分页
+        paginator = Paginator(skus, 1)
+
+        # 获取page页的内容
+        try:
+            page = int(page)
+        except Exception as e:
+            page = 1
+        if page > paginator.num_pages:
+            page = 1
+
+        # 获取page页的实例对象，对象里面有商品数据
+        skus_page = paginator.page(page)
+
+        # todo: 进行页码控制，页面上最多显示5个页码
+        # 1 总页数小于5页，页面上显示所有页码
+        # 2 如果当前页是前3页，显示1-5页
+        # 3 如果当前页是后3页，显示后5页
+        # 4 如果是其他情况，显示当前页前2页，当前页，当前页后2页
+        num_pages = paginator.num_pages
+        if num_pages < 5:
+            pages = range(1, num_pages+1)
+        elif page <= 3:
+            pages = range(1, 6)
+        elif num_pages - page < 2:
+            pages = range(num_pages-2, num_pages+1)
+        else:
+            pages = range(page-2, page+3)
+
+
+        # 获取新品信息
+        new_skus = GoodsSKU.objects.filter(type=type).order_by('-create_time')[:2] # 按创建时间倒序排列
+
+        # 获取用户购物车商品数目
+        user = request.user
+        cart_count = 0
+        if user.is_authenticated():
+            # 用户已登录
+            conn = get_redis_connection('default') # 链接redis数据库，默认9号库
+            cart_key = 'cart_%d' % user.id # 使用hash类型 key field1 value1 field2 value2
+            cart_count = conn.hlen(cart_key) # 计算value的个数,注意不是value的和
+
+        # 组织模版上下文
+        context = {'type': type, 'tpyes': types,
+                    'skus_page': skus_page,
+                    'new_skus': new_skus,
+                    'cart_count': cart_count,
+                    'sort': sort,
+                    'pages': pages}
+
+        return render(request, 'list.html', context)
