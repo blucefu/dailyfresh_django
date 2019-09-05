@@ -1,7 +1,7 @@
 {% extends 'base_detail_list.html' %}
-{% block title %}
-    <title>天天生鲜-商品详情</title>
-{% endblock title %}
+{% load staticfiles %}
+
+{% block title %}天天生鲜-商品详情{% endblock title %}
 
 {% block main_content %}
     <div class="breadcrumb">
@@ -19,6 +19,7 @@
             <h3>{{ sku.name }}</h3>
             <p>{{ sku.desc }}</p>
             <div class="prize_bar">
+                <!-- 获取商品价格 $('.show_price').children('em').text()  --> 
                 <span class="show_pirze">¥<em>{{ sku.price }}</em></span>
                 <span class="show_unit">单  位：{{ sku.unite }}</span>
             </div>
@@ -35,16 +36,18 @@
             <div class="goods_num clearfix">
                 <div class="num_name fl">数 量：</div>
                 <div class="num_add fl">
+                    <!-- 获取商品数量 $('.num_show').val()  --> 
                     <input type="text" class="num_show fl" value="1">
                     <a href="javascript:;" class="add fr">+</a>
                     <a href="javascript:;" class="minus fr">-</a>   
                 </div> 
             </div>
-
+            <!-- 设置商品总价 $('.total').children('em').text(amount.toFixed(2)+'元') -->
             <div class="total">总价：<em>16.80元</em></div>
             <div class="operate_btn">
+                {% csrf_token %}
                 <a href="javascript:;" class="buy_btn">立即购买</a>
-                <a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>             
+                <a href="javascript:;" sku_id="{{ sku.id }}" class="add_cart" id="add_cart">加入购物车</a>             
             </div>
         </div>
     </div>
@@ -101,25 +104,106 @@
 {% endblock bottom %}
 
 {% block bottomfiles %}
-    <script type="text/javascript" src="js/jquery-1.12.2.js"></script>
+    <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
     <script type="text/javascript">
+        // 定义函数后需要调用
+        update_goods_amount()
+
+        // 计算商品的总价，需要定义一个函数
+        function update_goods_amount(){
+            // 获取商品单价
+            price = $('.show_pirze').children('em').text()
+            // 获取商品数量
+            count = $('.num_show').val()
+            // 计算商品总价，price和count是字符串，需要将price和count转成数字
+            price = parseFloat(price)
+            count = parseInt(count)
+            amount = price*count
+            // 设置商品的总价
+            $('.total').children('em').text(amount.toFixed(2)+'元')
+            // $('.total').children('em').text('100'+'元')
+        }
+
+        //增加商品的数量
+        $('.add').click(function(){
+            //获取商品原有数量
+            count = $('.num_show').val()
+            // 加1
+            count = parseInt(count)+1
+            //重新设置商品的数量
+            $('.num_show').val(count)
+            //更新商品总价
+            update_goods_amount()
+        })
+        //减少商品数量
+         $('.minus').click(function(){
+            //获取商品原有数量
+            count = $('.num_show').val()
+            // 减1
+            count = parseInt(count)-1
+            if (count < 1){
+                count = 1
+            }
+            //重新设置商品的数量
+            $('.num_show').val(count)
+            //更新商品总价
+            update_goods_amount()
+        })
+        //手动输入商品数量
+        $('.num_show').blur(function(){
+            //获取用户输入的商品数目,this表示当前的class num_show   
+            count = $(this).val()
+            //校验count
+            if (isNaN(count) || count.trim().length==0 || parseInt(count)<1){
+                count = 1
+            }
+            // 重新设置商品数目
+            $(this).val(parseInt(count))
+            //更新商品总价
+            update_goods_amount()
+        })
+        // 获取加入购物车按钮的左上角坐标
         var $add_x = $('#add_cart').offset().top;
         var $add_y = $('#add_cart').offset().left;
-
+        // 获取购物车数目的左上角坐标
         var $to_x = $('#show_count').offset().top;
         var $to_y = $('#show_count').offset().left;
-
-        $(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+        
+        // 点击购物车按钮时候的js函数
         $('#add_cart').click(function(){
-            $(".add_jump").stop().animate({
-                'left': $to_y+7,
-                'top': $to_x+7},
-                "fast", function() {
-                    $(".add_jump").fadeOut('fast',function(){
-                        $('#show_count').html(2);
+            // 获取csrf_token 
+            csrf = $('input[name="csrfmiddlewaretoken"]').val()
+            // ajax获取商品ID和商品数目
+            sku_id = $(this).attr('sku_id') // 获取商品ID
+            count = $('.num_show').val() // 获取商品数目 
+            // 组织参数
+            params ={'sku_id': sku_id, 'count': count, 'csrfmiddlewaretoken': csrf}
+            // 发起ajax post 请求，访问/cart/add,传递参数给view:sku_id, count
+            // function (data){} 表示回调函数
+            $.post('/cart/add', params, function (data) {
+                if (data.res == 5){
+                    // 添加成功，执行动画效果，
+                    // 动画效果：先将.add_jump对象移动到右上角指定坐标，再执行函数
+                    // 函数里面是$(".add_jump").fadeOut，表示退出动画，fadeOut里面再执行函数
+                    // 函数里面是重新获取购物车商品数目操作
+                    // 设置动画的位置，该位置在购物车按钮的左上角再偏移80，10,注意位置移动是局部变量
+                    $(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+                    $(".add_jump").stop().animate({
+                        'left': $to_y+7,
+                        'top': $to_x+7},
+                        "fast", function() {
+                            $(".add_jump").fadeOut('fast',function(){
+                                $('#show_count').html(data.total_count);
+
+                            });
                     });
 
-            });
+                }
+                else{
+                    // 添加失败
+                    alert(data.errmsg)
+                }   
+            })
         })
     </script>
 {% endblock bottomfiles %}
