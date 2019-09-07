@@ -1,29 +1,22 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
-
 from django.contrib.auth import authenticate, login, logout# 导入django自带的用户认证系统,导入login函数
-
 from django.views.generic import View
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.conf import settings # 从dailyfresh里面settings导入SECRET_KEY 
 
 from user.models import User, Address
 from goods.models import GoodsSKU
-
 from celery_tasks.tasks import send_register_active_email # 导入celery发送邮件函数
-
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer # 导入加密类
 from itsdangerous import SignatureExpired
-
 from utils.mixin import LoginRequiredMixin # 先在utils目录下创建LoginRequiredMixin，再导入
 
 # from django.contrib.auth.mixins import PermissionRequiredMixin # django 1.11里面直接导入
-
 from django_redis import get_redis_connection # 导入redis连接函数
-
-
 import re
+import time
 
 # Create your views here.
 def register(request):
@@ -255,36 +248,42 @@ class AddressView(LoginRequiredMixin, View):
         '''显示'''
         # 获取登录用户对应的User对象
         user = request.user
-        # try:
-        #     address = Address.objects.get(user=user, is_default=True)
-        # except Address.DoesNotExist:
-        #     address = None # 不存在默认地址
+        try:
+            address = Address.objects.get(user=user, is_default=True) # models.Manager
+        except Address.DoesNotExist:
+            # 不存在默认收货地址
+            address = None
+        # address = Address.objects.get_default_address(user)
 
-        address = Address.objects.get_default_address(user)
-        # 使用模版
-        # 传给user_center_site.html页面一个变量 page = address
-        return render(request, 'user_center_site.html', {'page': 'address', 'address': address})
+        # 使用模板
+        return render(request, 'user_center_site.html', {'page': 'address', 'address':address})
 
     def post(self, request):
-        '''添加地址'''
-        # 接收数据:收件人、地址、邮编、手机
-        recevier = request.POST.get('recevier')
+        '''地址的添加'''
+        # 接收数据
+        receiver = request.POST.get('receiver')
         addr = request.POST.get('addr')
         zip_code = request.POST.get('zip_code')
         phone = request.POST.get('phone')
+
         # 校验数据
-        if not all([recevier, addr, phone]):
-            return render(request, 'user_center_site.html', {'errmsg': '数据格式不正确'})
-        if not re.match(r'^1[3|4|5|6|7|8|9][0-9]{9}$', phone):
-            return render(request, 'user_center_site.html', {'errmsg': '手机格式不正确'})
-        # 业务处理:添加地址
-        # 很简化的业务：如果用户已经有地址了，添加的地址不作为默认地址
-        # 获取登录用户对应的User对象
+        if not all([receiver, addr, phone, type]):
+            return render(request, 'user_center_site.html', {'errmsg':'数据不完整'})
+
+        # 校验手机号
+        if not re.match(r'^1[3|4|5|7|8][0-9]{9}$', phone):
+            return render(request, 'user_center_site.html', {'errmsg':'手机格式不正确'})
+
+        # 业务处理：地址添加
+        # 如果用户已存在默认收货地址，添加的地址不作为默认收货地址，否则作为默认收货地址
+        # 获取登录用户对应User对象
         user = request.user
+
         # try:
-        # address = Address.objects.get(user=user, is_default=True)
+        #     address = Address.objects.get(user=user, is_default=True)
         # except Address.DoesNotExist:
-        # address = None # 不存在默认地址
+        #     # 不存在默认收货地址
+        #     address = None
 
         address = Address.objects.get_default_address(user)
 
@@ -295,45 +294,17 @@ class AddressView(LoginRequiredMixin, View):
 
         # 添加地址
         Address.objects.create(user=user,
-                                recevier=recevier,
-                                addr=addr,
-                                zip_code=zip_code,
-                                phone=phone,
-                                is_default=is_default)
-        # Address.save()
-        # 返回应答，刷新页面
-        return redirect(reverse('user:address')) # get请求
+                               receiver=receiver,
+                               addr=addr,
+                               zip_code=zip_code,
+                               phone=phone,
+                               is_default=is_default)
+
+        # 返回应答,刷新地址页面
+        return redirect(reverse('user:address')) # get请求方式
 
 
 
-"""
- 
-# /user
-class UserInfoView(PermissionRequiredMixin, View):
-    '''用户中心-信息页'''
-    permission_required = 'polls.can_edit'
-    def get(self, request):
-        '''显示'''
-        # 传给user_center_info.html页面一个变量 page = info
-        return render(request, 'user_center_info.html', {'page': 'user'})
-
-# /user/order
-class UserOrderView(PermissionRequiredMixin, View):
-    '''用户中心-订单页'''
-    def get(self, request):
-        '''显示'''
-        # 传给user_center_order.html页面一个变量 page = order
-        return render(request, 'user_center_order.html',  {'page': 'order'})
-
-# /user/address
-class UserSiteView(PermissionRequiredMixin, View):
-    '''用户中心-地址页'''
-    def get(self, request):
-        '''显示'''
-        # 传给user_center_site.html页面一个变量 page = address
-        return render(request, 'user_center_site.html', {'page': 'address'})
-
-"""
 
 
 

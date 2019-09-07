@@ -98,6 +98,7 @@ DATABASES = {
         'PASSWORD': 'tianshi2019',
         'HOST': 'localhost',
         'PORT': 3306,
+        # django 2.0 可以直接设置数据隔离 'isolation_level':'read committed'
     }
 }
 
