@@ -20,6 +20,15 @@ class OrderInfo(BaseModel):
         (4, '银联支付')
     )
 
+
+    ORDER_STATUS = {
+        1: '待支付',
+        2: '待发货',
+        3: '待收货',
+        4: '待评价',
+        5: '已完成'
+    }
+
     ORDER_STATUS_CHOICES = (
         (1, '待支付'),
         (2, '待发货'),
@@ -27,6 +36,8 @@ class OrderInfo(BaseModel):
         (4, '待评价'),
         (5, '已完成')
     )
+   
+
 
     order_id = models.CharField(max_length=128, primary_key=True, verbose_name='订单id')
     user = models.ForeignKey('user.User', verbose_name='用户')

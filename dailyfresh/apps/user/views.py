@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
+from django.core.paginator import Paginator # 导入分页
 from django.contrib.auth import authenticate, login, logout# 导入django自带的用户认证系统,导入login函数
 from django.views.generic import View
 from django.http import HttpResponse, JsonResponse
@@ -8,6 +9,8 @@ from django.conf import settings # 从dailyfresh里面settings导入SECRET_KEY
 
 from user.models import User, Address
 from goods.models import GoodsSKU
+from order.models import OrderInfo, OrderGoods
+
 from celery_tasks.tasks import send_register_active_email # 导入celery发送邮件函数
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer # 导入加密类
 from itsdangerous import SignatureExpired
@@ -234,12 +237,62 @@ class UserInfoView(LoginRequiredMixin, View):
 # /user/order
 class UserOrderView(LoginRequiredMixin, View):
     '''用户中心-订单页'''
-    def get(self, request):
+    def get(self, request, page):
         '''显示'''
-        # 获取默认收货地址
+        # 获取用户
+        user = request.user
+        # 获取用户订单
+        orders = OrderInfo.objects.filter(user=user).order_by('-create_time')
+
+        # 遍历订单,查找订单里面的商品,每查一个，都放到order_skus列表中
+        for order in orders:
+            order_skus = OrderGoods.objects.filter(order=order.order_id)
+
+            # 遍历order_skus，计算每个商品的小计amount
+            for order_sku in order_skus:
+                amount = order_sku.count * order_sku.price
+                order_sku.amount = amount # 动态设置属性
+            # 动态给order增加属性，保存order_sku
+            order.order_skus = order_skus
+
+            # 动态给每个订单设置一个status_name
+            order.status_name = OrderInfo.ORDER_STATUS[order.order_status]
+
+        # 分页
+        paginator = Paginator(orders, 2) # 对orders分页，每页显示2条,paginator是分页对象
+
+        # 页码校验
+        try:
+            page = int(page)
+        except Exception as e:
+            page = 1
+        if page > paginator.num_pages: # paginator.num_pages 表示最大页数
+            page = 1
+
+        # 获取当前页内容
+        order_page = paginator.page(page) # order_page表示当前页面内容
+
+        # todo: 进行页码控制，页面上最多显示5个页码
+        # 1 总页数小于5页，页面上显示所有页码
+        # 2 如果当前页是前3页，显示1-5页
+        # 3 如果当前页是后3页，显示后5页
+        # 4 如果是其他情况，显示当前页前2页，当前页，当前页后2页
+        num_pages = paginator.num_pages # num_pages表示总页数
+        if num_pages < 5:
+            pages = range(1, num_pages+1)
+        elif page <= 3:
+            pages = range(1, 6)
+        elif num_pages - page < 2:
+            pages = range(num_pages-2, num_pages+1)
+        else:
+            pages = range(page-2, page+3)
+
+        # 组织上下文
+        context = {'order_page':order_page, 'pages':pages, 'page':'order'}
+
 
         # 传给user_center_order.html页面一个变量 page = order
-        return render(request, 'user_center_order.html',  {'page': 'order'})
+        return render(request, 'user_center_order.html', context)
 
 # /user/address
 class AddressView(LoginRequiredMixin, View):

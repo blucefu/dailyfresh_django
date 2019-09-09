@@ -22,7 +22,7 @@ urlpatterns = [
     # url(r'^address$', login_required(UserSiteView.as_view()), name='address'), # 个人中心-地址页
  
     url(r'^$', UserInfoView.as_view(), name='user'), # 个人中心-信息页
-    url(r'^order$', UserOrderView.as_view(), name='order'), # 个人中心-订单页
+    url(r'^order/(?P<page>\d+)$', UserOrderView.as_view(), name='order'), # 个人中心-订单页，输入地址时需要传页码
     url(r'^address$', AddressView.as_view(), name='address'), # 个人中心-地址页
  
 ]
