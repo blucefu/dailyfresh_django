@@ -1,0 +1,194 @@
+*** Starting uWSGI 2.0.18 (64bit) on [Mon Sep  9 11:19:08 2019] ***
+compiled with version: 4.2.1 Compatible Apple LLVM 10.0.1 (clang-1001.0.46.4) on 09 September 2019 02:46:20
+os: Darwin-18.6.0 Darwin Kernel Version 18.6.0: Thu Apr 25 23:16:27 PDT 2019; root:xnu-4903.261.4~2/RELEASE_X86_64
+nodename: localhost
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 4
+current working directory: /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+writing pidfile to uwsgi.pid
+detected binary path: /Users/fuzecheng/env_workspaces/env_workspace01/bin/uwsgi
+chdir() to /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+your processes number limit is 709
+your memory page size is 4096 bytes
+detected max file descriptor number: 256
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+uWSGI http bound on 127.0.0.1:8080 fd 3
+probably another instance of uWSGI is running on the same address (127.0.0.1:8080).
+bind(): Address already in use [core/socket.c line 769]
+*** Starting uWSGI 2.0.18 (64bit) on [Mon Sep  9 12:02:37 2019] ***
+compiled with version: 4.2.1 Compatible Apple LLVM 10.0.1 (clang-1001.0.46.4) on 09 September 2019 02:46:20
+os: Darwin-18.6.0 Darwin Kernel Version 18.6.0: Thu Apr 25 23:16:27 PDT 2019; root:xnu-4903.261.4~2/RELEASE_X86_64
+nodename: fuzeshengdeMacBook.local
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 4
+current working directory: /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+writing pidfile to uwsgi.pid
+detected binary path: /Users/fuzecheng/env_workspaces/env_workspace01/bin/uwsgi
+chdir() to /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+your processes number limit is 709
+your memory page size is 4096 bytes
+detected max file descriptor number: 256
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+uWSGI http bound on 127.0.0.1:8080 fd 4
+uwsgi socket 0 bound to TCP address 127.0.0.1:54235 (port auto-assigned) fd 3
+Python version: 3.7.4 (default, Jul  9 2019, 18:13:23)  [Clang 10.0.1 (clang-1001.0.46.4)]
+Set PythonHome to /Users/fuzecheng/env_workspaces/env_workspace01
+Python main interpreter initialized at 0x7fcdd47010a0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 416560 bytes (406 KB) for 8 cores
+*** Operational MODE: preforking+threaded ***
+Traceback (most recent call last):
+  File "dailyfresh/wsgi.py", line 16, in <module>
+    application = get_wsgi_application()
+  File "/Users/fuzecheng/env_workspaces/env_workspace01/lib/python3.7/site-packages/django/core/wsgi.py", line 13, in get_wsgi_application
+    django.setup(set_prefix=False)
+  File "/Users/fuzecheng/env_workspaces/env_workspace01/lib/python3.7/site-packages/django/__init__.py", line 22, in setup
+    configure_logging(settings.LOGGING_CONFIG, settings.LOGGING)
+  File "/Users/fuzecheng/env_workspaces/env_workspace01/lib/python3.7/site-packages/django/conf/__init__.py", line 56, in __getattr__
+    self._setup(name)
+  File "/Users/fuzecheng/env_workspaces/env_workspace01/lib/python3.7/site-packages/django/conf/__init__.py", line 41, in _setup
+    self._wrapped = Settings(settings_module)
+  File "/Users/fuzecheng/env_workspaces/env_workspace01/lib/python3.7/site-packages/django/conf/__init__.py", line 110, in __init__
+    mod = importlib.import_module(self.SETTINGS_MODULE)
+  File "/Users/fuzecheng/env_workspaces/env_workspace01/lib/python3.7/importlib/__init__.py", line 127, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1006, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 967, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 677, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 724, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 860, in get_code
+  File "<frozen importlib._bootstrap_external>", line 791, in source_to_code
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "./dailyfresh/settings.py", line 35
+    ALLOWED_HOSTS = [*]
+                      ^
+SyntaxError: invalid syntax
+unable to load app 0 (mountpoint='') (callable not found or import error)
+*** no app loaded. going in full dynamic mode ***
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 4859)
+spawned uWSGI worker 1 (pid: 4860, cores: 2)
+spawned uWSGI worker 2 (pid: 4861, cores: 2)
+spawned uWSGI worker 3 (pid: 4862, cores: 2)
+spawned uWSGI worker 4 (pid: 4863, cores: 2)
+spawned uWSGI http 1 (pid: 4864)
+--- no python application found, check your startup logs for errors ---
+[pid: 4863|app: -1|req: -1/1] 127.0.0.1 () {48 vars in 1001 bytes} [Mon Sep  9 12:03:27 2019] GET /index => generated 21 bytes in 1 msecs (HTTP/1.1 500) 2 headers in 83 bytes (0 switches on core 0)
+--- no python application found, check your startup logs for errors ---
+[pid: 4863|app: -1|req: -1/2] 127.0.0.1 () {48 vars in 1001 bytes} [Mon Sep  9 12:03:49 2019] GET /index => generated 21 bytes in 0 msecs (HTTP/1.1 500) 2 headers in 83 bytes (0 switches on core 1)
+--- no python application found, check your startup logs for errors ---
+[pid: 4863|app: -1|req: -1/3] 127.0.0.1 () {48 vars in 1001 bytes} [Mon Sep  9 12:05:13 2019] GET /index => generated 21 bytes in 0 msecs (HTTP/1.1 500) 2 headers in 83 bytes (1 switches on core 0)
+--- no python application found, check your startup logs for errors ---
+[pid: 4863|app: -1|req: -1/4] 127.0.0.1 () {44 vars in 948 bytes} [Mon Sep  9 12:06:51 2019] GET /index => generated 21 bytes in 0 msecs (HTTP/1.1 500) 2 headers in 83 bytes (0 switches on core 1)
+SIGINT/SIGQUIT received...killing workers...
+gateway "uWSGI http 1" has been buried (pid: 4864)
+worker 4 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 1 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.18 (64bit) on [Mon Sep  9 12:10:48 2019] ***
+compiled with version: 4.2.1 Compatible Apple LLVM 10.0.1 (clang-1001.0.46.4) on 09 September 2019 02:46:20
+os: Darwin-18.6.0 Darwin Kernel Version 18.6.0: Thu Apr 25 23:16:27 PDT 2019; root:xnu-4903.261.4~2/RELEASE_X86_64
+nodename: fuzeshengdeMacBook.local
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 4
+current working directory: /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+writing pidfile to uwsgi.pid
+detected binary path: /Users/fuzecheng/env_workspaces/env_workspace01/bin/uwsgi
+chdir() to /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+your processes number limit is 709
+your memory page size is 4096 bytes
+detected max file descriptor number: 256
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+uWSGI http bound on 127.0.0.1:8080 fd 4
+uwsgi socket 0 bound to TCP address 127.0.0.1:55393 (port auto-assigned) fd 3
+Python version: 3.7.4 (default, Jul  9 2019, 18:13:23)  [Clang 10.0.1 (clang-1001.0.46.4)]
+Set PythonHome to /Users/fuzecheng/env_workspaces/env_workspace01
+Python main interpreter initialized at 0x7fd3bee08300
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 416560 bytes (406 KB) for 8 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 2 seconds on interpreter 0x7fd3bee08300 pid: 4884 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 4884)
+spawned uWSGI worker 1 (pid: 4885, cores: 2)
+spawned uWSGI worker 2 (pid: 4886, cores: 2)
+spawned uWSGI worker 3 (pid: 4887, cores: 2)
+spawned uWSGI worker 4 (pid: 4888, cores: 2)
+spawned uWSGI http 1 (pid: 4889)
+测试设置缓存
+[pid: 4888|app: 0|req: 1/1] 127.0.0.1 () {46 vars in 979 bytes} [Mon Sep  9 12:17:08 2019] GET /index => generated 17431 bytes in 1702 msecs (HTTP/1.1 200) 4 headers in 125 bytes (1 switches on core 0)
+[pid: 4888|app: 0|req: 3/2] 127.0.0.1 () {42 vars in 865 bytes} [Mon Sep  9 12:17:10 2019] GET /static/css/main.css => generated 93 bytes in 18 msecs (HTTP/1.1 404) 3 headers in 100 bytes (1 switches on core 0)
+[pid: 4888|app: 0|req: 3/3] 127.0.0.1 () {42 vars in 867 bytes} [Mon Sep  9 12:17:10 2019] GET /static/css/reset.css => generated 94 bytes in 22 msecs (HTTP/1.1 404) 3 headers in 100 bytes (1 switches on core 1)
+[pid: 4886|app: 0|req: 2/4] 127.0.0.1 () {42 vars in 892 bytes} [Mon Sep  9 12:17:10 2019] GET /static/images/logo.png => generated 96 bytes in 1021 msecs (HTTP/1.1 404) 3 headers in 100 bytes (1 switches on core 1)
+[pid: 4885|app: 0|req: 1/5] 127.0.0.1 () {42 vars in 848 bytes} [Mon Sep  9 12:17:10 2019] GET /static/js/slide.js => generated 92 bytes in 1029 msecs (HTTP/1.1 404) 3 headers in 100 bytes (1 switches on core 0)
+[pid: 4886|app: 0|req: 2/6] 127.0.0.1 () {42 vars in 872 bytes} [Mon Sep  9 12:17:10 2019] GET /static/js/jquery-1.12.4.min.js => generated 104 bytes in 1035 msecs (HTTP/1.1 404) 3 headers in 101 bytes (1 switches on core 0)
+[pid: 4887|app: 0|req: 1/7] 127.0.0.1 () {42 vars in 864 bytes} [Mon Sep  9 12:17:10 2019] GET /static/js/jquery-ui.min.js => generated 100 bytes in 1059 msecs (HTTP/1.1 404) 3 headers in 101 bytes (1 switches on core 0)
+[pid: 4888|app: 0|req: 4/8] 127.0.0.1 () {42 vars in 848 bytes} [Mon Sep  9 12:17:11 2019] GET /static/js/slide.js => generated 92 bytes in 1 msecs (HTTP/1.1 404) 3 headers in 100 bytes (1 switches on core 0)
+SIGINT/SIGQUIT received...killing workers...
+gateway "uWSGI http 1" has been buried (pid: 4889)
+worker 4 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 1 buried after 1 seconds
+goodbye to uWSGI.
+*** Starting uWSGI 2.0.18 (64bit) on [Mon Sep  9 12:58:06 2019] ***
+compiled with version: 4.2.1 Compatible Apple LLVM 10.0.1 (clang-1001.0.46.4) on 09 September 2019 02:46:20
+os: Darwin-18.6.0 Darwin Kernel Version 18.6.0: Thu Apr 25 23:16:27 PDT 2019; root:xnu-4903.261.4~2/RELEASE_X86_64
+nodename: fuzeshengdeMacBook.local
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 4
+current working directory: /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+writing pidfile to uwsgi.pid
+detected binary path: /Users/fuzecheng/env_workspaces/env_workspace01/bin/uwsgi
+chdir() to /Users/fuzecheng/PycharmProjects/django/git_test/dailyfresh
+your processes number limit is 709
+your memory page size is 4096 bytes
+detected max file descriptor number: 256
+lock engine: OSX spinlocks
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8080 fd 3
+Python version: 3.7.4 (default, Jul  9 2019, 18:13:23)  [Clang 10.0.1 (clang-1001.0.46.4)]
+Set PythonHome to /Users/fuzecheng/env_workspaces/env_workspace01
+Python main interpreter initialized at 0x7f9cbef02010
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 416560 bytes (406 KB) for 8 cores
+*** Operational MODE: preforking+threaded ***
+WSGI app 0 (mountpoint='') ready in 2 seconds on interpreter 0x7f9cbef02010 pid: 5366 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 5366)
+spawned uWSGI worker 1 (pid: 5368, cores: 2)
+spawned uWSGI worker 2 (pid: 5369, cores: 2)
+spawned uWSGI worker 3 (pid: 5370, cores: 2)
+spawned uWSGI worker 4 (pid: 5371, cores: 2)
+[pid: 5369|app: 0|req: 1/1] 127.0.0.1 () {48 vars in 999 bytes} [Mon Sep  9 13:02:22 2019] GET /index => generated 17431 bytes in 1369 msecs (HTTP/1.1 200) 4 headers in 125 bytes (2 switches on core 0)
+[pid: 5369|app: 0|req: 2/2] 127.0.0.1 () {46 vars in 911 bytes} [Mon Sep  9 13:02:24 2019] GET /static/css/main.css => generated 93 bytes in 14 msecs (HTTP/1.1 404) 3 headers in 100 bytes (2 switches on core 1)
+[pid: 5369|app: 0|req: 3/3] 127.0.0.1 () {46 vars in 938 bytes} [Mon Sep  9 13:02:24 2019] GET /static/images/logo.png => generated 96 bytes in 2 msecs (HTTP/1.1 404) 3 headers in 100 bytes (2 switches on core 0)
+[pid: 5371|app: 0|req: 2/5] 127.0.0.1 () {46 vars in 910 bytes} [Mon Sep  9 13:02:24 2019] GET /static/js/jquery-ui.min.js => generated 100 bytes in 923 msecs (HTTP/1.1 404) 3 headers in 101 bytes (2 switches on core 1)
+[pid: 5371|app: 0|req: 2/5] 127.0.0.1 () {46 vars in 918 bytes} [Mon Sep  9 13:02:24 2019] GET /static/js/jquery-1.12.4.min.js => generated 104 bytes in 970 msecs (HTTP/1.1 404) 3 headers in 101 bytes (2 switches on core 0)
+[pid: 5369|app: 0|req: 4/6] 127.0.0.1 () {46 vars in 910 bytes} [Mon Sep  9 13:02:25 2019] GET /static/js/jquery-ui.min.js => generated 100 bytes in 4 msecs (HTTP/1.1 404) 3 headers in 101 bytes (2 switches on core 1)
+测试设置缓存
+[pid: 5369|app: 0|req: 5/7] 127.0.0.1 () {50 vars in 1030 bytes} [Mon Sep  9 14:18:38 2019] GET /index => generated 17431 bytes in 301 msecs (HTTP/1.1 200) 4 headers in 125 bytes (2 switches on core 1)
+[pid: 5371|app: 0|req: 3/8] 127.0.0.1 () {50 vars in 1048 bytes} [Mon Sep  9 14:18:42 2019] GET /goods/1 => generated 12301 bytes in 380 msecs (HTTP/1.1 200) 5 headers in 279 bytes (1 switches on core 1)
+[pid: 5369|app: 0|req: 6/9] 127.0.0.1 () {54 vars in 1090 bytes} [Mon Sep  9 14:18:44 2019] POST /cart/add => generated 67 bytes in 21 msecs (HTTP/1.1 200) 4 headers in 114 bytes (1 switches on core 1)
+[pid: 5371|app: 0|req: 4/10] 127.0.0.1 () {50 vars in 1046 bytes} [Mon Sep  9 14:18:47 2019] GET /cart/ => generated 14133 bytes in 41 msecs (HTTP/1.1 200) 5 headers in 279 bytes (2 switches on core 0)
+[pid: 5370|app: 0|req: 1/11] 127.0.0.1 () {52 vars in 1070 bytes} [Mon Sep  9 14:47:58 2019] GET /cart/ => generated 14133 bytes in 2021 msecs (HTTP/1.1 200) 5 headers in 279 bytes (2 switches on core 0)
